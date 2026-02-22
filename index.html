@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <title>Go WebSocket Chat</title>
+  </head>
+  <body>
+    <div
+      id="chat"
+      style="height: 300px; overflow-y: scroll; border: 1px solid #ccc"
+    ></div>
+    <input type="text" id="msg" placeholder="Type a message..." autofocus />
+    <button onclick="send()">Send</button>
+
+    <script>
+      var ws = new WebSocket("ws://" + window.location.host + "/ws");
+
+      ws.onmessage = function (event) {
+        var chat = document.getElementById("chat");
+        var message = document.createElement("div");
+        message.innerText = event.data;
+        chat.appendChild(message);
+        chat.scrollTop = chat.scrollHeight;
+      };
+
+      function send() {
+        var input = document.getElementById("msg");
+        if (input.value) {
+          ws.send(input.value);
+          input.value = "";
+        }
+      }
+
+      document
+        .getElementById("msg")
+        .addEventListener("keypress", function (event) {
+          if (event.key === "Enter") send();
+        });
+    </script>
+  </body>
+</html>
